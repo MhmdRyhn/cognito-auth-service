@@ -1,5 +1,5 @@
 # Cognito Auth Service
-Auth service built using Go Lang in AWS Cognito
+Auth service built using **Go** in **AWS Cognito**. To use this repository as your auth service, your **Cognito User Pool** must follow [**this**](https://github.com/MhmdRyhn/aws-cognito-iac) configurations.
 
 
 ## Run The Server
