@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	cognitoidp "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 )
 
 
@@ -19,3 +20,5 @@ func awsSession() *session.Session {
 	})
 	return session
 }
+
+var client *cognitoidp.CognitoIdentityProvider = cognitoidp.New(awsSession())

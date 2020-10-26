@@ -25,7 +25,7 @@ func SignUp(username string, password string) (string, error) {
 		},
 	}
 
-	client := cognitoidp.New(awsSession())
+	// client := cognitoidp.New(awsSession())
 	_, err := client.SignUp(newUserInput)
 	if err != nil {
 		return "", err
@@ -44,7 +44,7 @@ func ConfirmSignUp(username string, confirmationCode string) (string, error) {
 		ConfirmationCode: aws.String(confirmationCode),
 	}
 
-	client := cognitoidp.New(awsSession())
+	// client := cognitoidp.New(awsSession())
 	_, err := client.ConfirmSignUp(confirmSignupInput)
 	if err != nil {
 		return "", err
@@ -77,7 +77,7 @@ func AdminCreateUser(username string, temporaryPassword string) (string, error) 
 		},
     }
 
-	client := cognitoidp.New(awsSession())
+	// client := cognitoidp.New(awsSession())
 	_, err := client.AdminCreateUser(newUserInput)
 	if err != nil {
 		return "", err
