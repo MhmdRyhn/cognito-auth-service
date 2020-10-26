@@ -1,7 +1,7 @@
 package auth
 
+
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -37,7 +37,7 @@ func SignIn(username string, password string) (map[string]string, error) {
 // Get new `accessToken` and `idToken` using the `refreshToken`
 func RefreshTokenAuth(refreshToken string) (map[string]string, error) {
 	appClientId := os.Getenv("APP_CLIENT_ID")
-	signinInput := &cognitoidp.InitiateAuthInput {
+	refreshTokenAuthInput := &cognitoidp.InitiateAuthInput {
 		ClientId : aws.String(appClientId),
 		AuthFlow: aws.String("REFRESH_TOKEN_AUTH"),
 		AuthParameters: map[string]*string {
@@ -45,7 +45,7 @@ func RefreshTokenAuth(refreshToken string) (map[string]string, error) {
 		},
 	}
 
-	response, err := client.InitiateAuth(signinInput)
+	response, err := client.InitiateAuth(refreshTokenAuthInput)
 	if err != nil {
 		return map[string]string {}, err
 	} else {

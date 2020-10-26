@@ -1,4 +1,4 @@
-# cognito_auth_service
+# Cognito Auth Service
 Auth service built using Go Lang in AWS Cognito
 
 
