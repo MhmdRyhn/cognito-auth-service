@@ -2,7 +2,6 @@ package auth
 
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,7 +25,6 @@ func SignIn(username string, password string) (map[string]string, error) {
 	if err != nil {
 		return map[string]string {}, err
 	} else {
-		fmt.Println("Signed in success")
 		if response.AuthenticationResult != nil {
 			return map[string]string {
 				"accessToken": *(response.AuthenticationResult.AccessToken),

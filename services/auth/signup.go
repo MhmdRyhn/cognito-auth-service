@@ -44,7 +44,6 @@ func ConfirmSignUp(username string, confirmationCode string) (string, error) {
 		ConfirmationCode: aws.String(confirmationCode),
 	}
 
-	// client := cognitoidp.New(awsSession())
 	_, err := client.ConfirmSignUp(confirmSignupInput)
 	if err != nil {
 		return "", err
@@ -65,7 +64,7 @@ func AdminCreateUser(username string, temporaryPassword string) (string, error) 
         DesiredDeliveryMediums: []*string{
             aws.String("EMAIL"),
         },
-        UserAttributes: []*cognitoidp.AttributeType{
+        UserAttributes: []*cognitoidp.AttributeType {
             {
                 Name:  aws.String("email"),
                 Value: aws.String(username),
@@ -77,11 +76,33 @@ func AdminCreateUser(username string, temporaryPassword string) (string, error) 
 		},
     }
 
-	// client := cognitoidp.New(awsSession())
 	_, err := client.AdminCreateUser(newUserInput)
 	if err != nil {
 		return "", err
 	} else {
 		return fmt.Sprintf("User with email %s created successfully.", username), err
+	}
+}
+
+
+// Force change password on first login after admin creates the user
+func ForceChangePassword(session string, username string, password string) (string, error) {
+	appClientId := os.Getenv("APP_CLIENT_ID")
+	challengeName := "NEW_PASSWORD_REQUIRED"
+	respondToAuthChallengeInput := &cognitoidp.RespondToAuthChallengeInput {
+		ClientId: aws.String(appClientId),
+		ChallengeName: aws.String(challengeName),
+		Session: aws.String(session),
+		ChallengeResponses: map[string]*string {
+			"USERNAME": aws.String(username),
+			"NEW_PASSWORD": aws.String(password),
+		},
+	}
+
+	_, err := client.RespondToAuthChallenge(respondToAuthChallengeInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("Password changed successfully."), err
 	}
 }
