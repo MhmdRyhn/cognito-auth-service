@@ -63,8 +63,14 @@ func ToCustomErrorMessage(err error) map[string]string {
 				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one digit.", err.Field())
 			case "punctuation":
 				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one punctuation.", err.Field())
-            default:
-                errorMessage[err.Field()] = fmt.Sprintf("Something wrong on %s; %s", err.Field(), err.Tag())
+			case "email":
+				errorMessage[err.Field()] = fmt.Sprintf("%s must be a valid email.", err.Field())
+			case "min":
+				errorMessage[err.Field()] = fmt.Sprintf("%s must be of length at least %s.", err.Field(), err.Param())
+			case "max":
+				errorMessage[err.Field()] = fmt.Sprintf("%s must be of length at best %d.", err.Field(), err.Param())
+			default:
+				errorMessage[err.Field()] = fmt.Sprintf("Missing custom error message for %s on tag %s.", err.Field(), err.Tag())
             }
         }
     }
