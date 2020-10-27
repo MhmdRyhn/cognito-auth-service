@@ -106,3 +106,20 @@ func ForceChangePassword(session string, username string, password string) (stri
 		return fmt.Sprintf("Password changed successfully."), err
 	}
 }
+
+
+// Admin deletes a user from the User Pool
+func AdminDeleteUser(username string) (string, error) {
+	userPoolId := os.Getenv("USER_POOL")
+	adminDeleteUserInput := &cognitoidp.AdminDeleteUserInput {
+		UserPoolId: aws.String(userPoolId),
+		Username: aws.String(username),
+	}
+
+	_, err := client.AdminDeleteUser(adminDeleteUserInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("User %s has been deleted successfully.", username), err
+	}
+}
