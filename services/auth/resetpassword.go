@@ -12,10 +12,10 @@ import (
 
 // Send a verification code to users' `email` to reset password
 func ForgetPassword(username string) (string, error) {
-	userPoolId := os.Getenv("APP_CLIENT_ID")
+	appClientId := os.Getenv("APP_CLIENT_ID")
 
 	forgetPasswordInput := &cognitoidp.ForgotPasswordInput {
-		ClientId: aws.String(userPoolId),
+		ClientId: aws.String(appClientId),
 		Username: aws.String(username),
     }
 
@@ -24,7 +24,7 @@ func ForgetPassword(username string) (string, error) {
 		return "", err
 	} else {
 		return fmt.Sprintf(
-			"A verification code will be sent to email %s if a user exist with this email.", username,
+			"A verification code will be sent to email %s if a user exists with this email.", username,
 		), err
 	}
 }
@@ -32,10 +32,10 @@ func ForgetPassword(username string) (string, error) {
 
 // Users can reset password using the verification code sent to their email
 func ConfirmForgetPassword(username string, confirmationCode string, password string) (string, error) {
-	userPoolId := os.Getenv("APP_CLIENT_ID")
+	appClientId := os.Getenv("APP_CLIENT_ID")
 
 	confirmForgetPasswordInput := &cognitoidp.ConfirmForgotPasswordInput {
-		ClientId: aws.String(userPoolId),
+		ClientId: aws.String(appClientId),
 		Username: aws.String(username),
 		ConfirmationCode: aws.String(confirmationCode),
 		Password: aws.String(password),
