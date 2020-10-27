@@ -18,6 +18,7 @@ func printMap(response map[string]string) {
 	}
 }
 
+
 func main()  {
 	router := gin.Default()
 	route.RegisterRoutes(router)
