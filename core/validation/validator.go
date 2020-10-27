@@ -1,3 +1,9 @@
+// Core package for validating JSON input. Some useful links that was helpful:
+// # Registering custom validator ->
+// https://medium.com/@apzuk3/input-validation-in-golang-bc24cdec1835
+// # Custom error message ->
+// https://learning-cloud-native-go.github.io/docs/a12.adding_validator.v9/
+
 package validation
 
 
@@ -19,6 +25,7 @@ func NewValidator() *validator.Validate {
 }
 
 
+// This function helps to get the JSON name instead of the struct attribute name
 func RegisterTagName(validate *validator.Validate) {
 	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
         name := strings.SplitN(field.Tag.Get("json"), ",", 2)[0]
