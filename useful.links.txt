@@ -1,0 +1,9 @@
+# This file is not the part of this project. It's just being used to 
+# record some useful links during learing new things at the time of 
+# building this project.
+
+# Custom field validator
+https://medium.com/@apzuk3/input-validation-in-golang-bc24cdec1835
+
+# Custom error message
+https://learning-cloud-native-go.github.io/docs/a12.adding_validator.v9/
