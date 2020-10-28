@@ -20,6 +20,7 @@ Auth service built using **Go** in **AWS Cognito**. To use this repository as yo
 
 ## Exposed APIs
 - Sign Up - `/auth/signup`
+- Confirm Sign Up - `/auth/confirm-signup`
 
 
 ## Run The Server
