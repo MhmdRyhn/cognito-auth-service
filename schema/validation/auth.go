@@ -47,3 +47,24 @@ func ValidateConfirmSignUpData(body []byte, confirmSignUpSchema *schema.ConfirmS
 		return err, false
 	}
 }
+
+
+//  Validate incoming JSON data for user signin
+func ValidateSignInData(body []byte, signInSchema *schema.SignInSchema) (map[string]string, bool) {
+	// Check if request body is well formatted JSON
+	if err := json.Unmarshal(body, &signInSchema); err != nil {
+        return map[string]string {
+			"jsonFormatError": "Invalid JSON data.",
+		}, false
+	}
+	// Validate data based on `SignInSchema`
+	validator := validation.NewValidator()
+	err := validator.Struct(signInSchema)
+	if err == nil {
+		return map[string]string {}, true
+	} else {
+		err := validation.ToCustomErrorMessage(err)
+		return err, false
+	}
+}
+

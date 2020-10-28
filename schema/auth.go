@@ -12,3 +12,9 @@ type ConfirmSignUpSchema struct {
 	Email string `json:"email" validate:"required,email"`
 	ConfirmationCode string `json:"confirmationCode" validate:"required,min=1"`
 }
+
+
+type SignInSchema struct {
+	Email string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
+}

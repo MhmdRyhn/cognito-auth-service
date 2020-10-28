@@ -27,7 +27,7 @@ func SignUpHandler(ctx *gin.Context) {
 		})
 		return
 	} 
-	// SignUp a new user here.
+	// SignUp a new user
 	response, awsError := auth.SignUp(signUpSchema.Email, signUpSchema.Password)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
@@ -52,7 +52,7 @@ func SignUpHandler(ctx *gin.Context) {
 func ConfirmSignUpHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var confirmSignUpSchema schema.ConfirmSignUpSchema
-	// Validate input data
+	// Validate confirm signup input data
 	errorMessages, ok := schemavalidation.ValidateConfirmSignUpData(body, &confirmSignUpSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -63,13 +63,49 @@ func ConfirmSignUpHandler(ctx *gin.Context) {
 		})
 		return
 	} 
-	// SignUp a new user here.
+	// Confirm SignUp a new user
 	response, awsError := auth.ConfirmSignUp(confirmSignUpSchema.Email, confirmSignUpSchema.ConfirmationCode)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": map[string]string {},
 			"errors": map[string]string {},
 			"message": response,
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
+}
+
+
+// Handler function used to sign in a user
+func SignInHandler(ctx *gin.Context) {
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var signInSchema schema.SignInSchema
+	// Validate signin input data
+	errorMessages, ok := schemavalidation.ValidateSignInData(body, &signInSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	}
+	// Signin user
+	response, awsError := auth.SignIn(signInSchema.Email, signInSchema.Password)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": response,
+			"errors": map[string]string {},
+			"message": "Signed in succssfully.",
 			"statusCode": http.StatusOK,
 		})
 	} else {
