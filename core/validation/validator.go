@@ -61,21 +61,33 @@ func ToCustomErrorMessage(err error) map[string]string {
         for _, err := range fieldErrors {
             switch err.Tag() {
 			case "required":
-				errorMessage[err.Field()] = fmt.Sprintf("%s is a required field.", err.Field())
+				errorMessage[err.Field()] = "Missing data for required field."
 			case "uppercase":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one capital letter.", err.Field())
+				errorMessage[err.Field()] = "Must contain at least one capital letter."
 			case "lowercase":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one small letter.", err.Field())
+				errorMessage[err.Field()] = "Must contain at least one small letter."
 			case "digit":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one digit.", err.Field())
+				errorMessage[err.Field()] = "Must contain at least one digit."
 			case "punctuation":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must contain at least one punctuation.", err.Field())
+				errorMessage[err.Field()] = "Must contain at least one punctuation."
 			case "email":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must be a valid email.", err.Field())
+				errorMessage[err.Field()] = "Not a valid email address."
 			case "min":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must be of length at least %s.", err.Field(), err.Param())
+				errorType := err.Type().Name()
+				if errorType == "string" {
+					errorMessage[err.Field()] = fmt.Sprintf("Length must be at least %s.", err.Param())
+				} else if errorType == "int" {
+					errorMessage[err.Field()] = fmt.Sprintf("Value must be at least %s.", err.Param())
+				}
 			case "max":
-				errorMessage[err.Field()] = fmt.Sprintf("%s must be of length at best %d.", err.Field(), err.Param())
+				errorType := err.Type().Name()
+				if errorType == "string" {
+					errorMessage[err.Field()] = fmt.Sprintf("Length can be at best %s.", err.Param())
+				} else if errorType == "int" {
+					errorMessage[err.Field()] = fmt.Sprintf("Value can be at best %s.", err.Param())
+				}
+			case "eqfield":
+				errorMessage[err.Field()] = fmt.Sprintf("Must be equal to %s.",  err.Param())
 			default:
 				errorMessage[err.Field()] = fmt.Sprintf("Missing custom error message for %s on tag %s.", err.Field(), err.Tag())
             }
