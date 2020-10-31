@@ -118,3 +118,79 @@ func SignInHandler(ctx *gin.Context) {
 		})
 	}
 }
+
+
+// Handler function used to get code for reset password
+func ForgetPasswordHandler(ctx *gin.Context) {
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var forgetPasswordSchema schema.ForgetPasswordSchema
+	// Validate signin input data
+	errorMessages, ok := schemavalidation.ValidateForgetPasswordData(body, &forgetPasswordSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	}
+	// Signin user
+	response, awsError := auth.ForgetPassword(forgetPasswordSchema.Email)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {},
+			"message": response,
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
+}
+
+
+// Handler function used to reset password
+func ConfirmForgetPasswordHandler(ctx *gin.Context) {
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var confirmForgetPasswordSchema schema.ConfirmForgetPasswordSchema
+	// Validate signin input data
+	errorMessages, ok := schemavalidation.ValidateConfirmForgetPasswordData(body, &confirmForgetPasswordSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	}
+	// Signin user
+	response, awsError := auth.ConfirmForgetPassword(
+		confirmForgetPasswordSchema.Email, 
+		confirmForgetPasswordSchema.ConfirmationCode,
+		confirmForgetPasswordSchema.Password,
+	)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {},
+			"message": response,
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
+}

@@ -1,3 +1,8 @@
+// This package is being used to validate JSON input. 
+// For now, the function stucture is same, but it will 
+// be converted into a common function for input 
+// validation later.
+
 package schemavalidation
 
 
@@ -68,3 +73,42 @@ func ValidateSignInData(body []byte, signInSchema *schema.SignInSchema) (map[str
 	}
 }
 
+
+//  Validate forget password JSON data
+func ValidateForgetPasswordData(body []byte, forgetPasswordSchema *schema.ForgetPasswordSchema) (map[string]string, bool) {
+	// Check if request body is well formatted JSON
+	if err := json.Unmarshal(body, &forgetPasswordSchema); err != nil {
+        return map[string]string {
+			"jsonFormatError": "Invalid JSON data.",
+		}, false
+	}
+	// Validate data based on `SignInSchema`
+	validator := validation.NewValidator()
+	err := validator.Struct(forgetPasswordSchema)
+	if err == nil {
+		return map[string]string {}, true
+	} else {
+		err := validation.ToCustomErrorMessage(err)
+		return err, false
+	}
+}
+
+
+//  Validate forget password JSON data
+func ValidateConfirmForgetPasswordData(body []byte, confirmForgetPasswordSchema *schema.ConfirmForgetPasswordSchema) (map[string]string, bool) {
+	// Check if request body is well formatted JSON
+	if err := json.Unmarshal(body, &confirmForgetPasswordSchema); err != nil {
+        return map[string]string {
+			"jsonFormatError": "Invalid JSON data.",
+		}, false
+	}
+	// Validate data based on `SignInSchema`
+	validator := validation.NewValidator()
+	err := validator.Struct(confirmForgetPasswordSchema)
+	if err == nil {
+		return map[string]string {}, true
+	} else {
+		err := validation.ToCustomErrorMessage(err)
+		return err, false
+	}
+}

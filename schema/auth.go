@@ -18,3 +18,15 @@ type SignInSchema struct {
 	Email string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
 }
+
+
+type ForgetPasswordSchema struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+
+type ConfirmForgetPasswordSchema struct {
+	Email string `json:"email" validate:"required,email"`
+	ConfirmationCode string `json:"confirmationCode" validate:"required,min=1"`
+	Password string `json:"password" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
+}
