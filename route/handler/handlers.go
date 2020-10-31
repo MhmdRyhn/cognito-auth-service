@@ -17,7 +17,7 @@ func SignUpHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var signUpSchema schema.SignUpSchema
 	// Validate input data
-	errorMessages, ok := schemavalidation.ValidateSignUpData(body, &signUpSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &signUpSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
@@ -53,7 +53,7 @@ func ConfirmSignUpHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var confirmSignUpSchema schema.ConfirmSignUpSchema
 	// Validate confirm signup input data
-	errorMessages, ok := schemavalidation.ValidateConfirmSignUpData(body, &confirmSignUpSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &confirmSignUpSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
@@ -89,7 +89,7 @@ func SignInHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var signInSchema schema.SignInSchema
 	// Validate signin input data
-	errorMessages, ok := schemavalidation.ValidateSignInData(body, &signInSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &signInSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
@@ -125,7 +125,7 @@ func RefreshTokenAuthHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var refreshTokenAuthSchema schema.RefreshTokenAuthSchema
 	// Validate signin input data
-	errorMessages, ok := schemavalidation.ValidateRefreshTokenAuthData(body, &refreshTokenAuthSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &refreshTokenAuthSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
@@ -161,7 +161,7 @@ func ForgetPasswordHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var forgetPasswordSchema schema.ForgetPasswordSchema
 	// Validate signin input data
-	errorMessages, ok := schemavalidation.ValidateForgetPasswordData(body, &forgetPasswordSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &forgetPasswordSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
@@ -197,7 +197,7 @@ func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var confirmForgetPasswordSchema schema.ConfirmForgetPasswordSchema
 	// Validate signin input data
-	errorMessages, ok := schemavalidation.ValidateConfirmForgetPasswordData(body, &confirmForgetPasswordSchema)
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &confirmForgetPasswordSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
 			"data": map[string]string {},
