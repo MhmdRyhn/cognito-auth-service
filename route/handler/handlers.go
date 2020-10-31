@@ -120,6 +120,42 @@ func SignInHandler(ctx *gin.Context) {
 }
 
 
+// Handler function used to get new tokej using Refresh token
+func RefreshTokenAuthHandler(ctx *gin.Context) {
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var refreshTokenAuthSchema schema.RefreshTokenAuthSchema
+	// Validate signin input data
+	errorMessages, ok := schemavalidation.ValidateRefreshTokenAuthData(body, &refreshTokenAuthSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	}
+	// Signin user
+	response, awsError := auth.RefreshTokenAuth(refreshTokenAuthSchema.RefreshToken)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {},
+			"message": response,
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H {
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
+}
+
+
 // Handler function used to get code for reset password
 func ForgetPasswordHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)

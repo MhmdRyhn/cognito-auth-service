@@ -20,6 +20,11 @@ type SignInSchema struct {
 }
 
 
+type RefreshTokenAuthSchema struct {
+	RefreshToken string `json:"refreshToken" validate:"required,min=1"`
+}
+
+
 type ForgetPasswordSchema struct {
 	Email string `json:"email" validate:"required,email"`
 }

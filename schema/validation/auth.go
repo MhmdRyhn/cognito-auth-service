@@ -74,6 +74,26 @@ func ValidateSignInData(body []byte, signInSchema *schema.SignInSchema) (map[str
 }
 
 
+//  Validate refresh token auth JSON data
+func ValidateRefreshTokenAuthData(body []byte, refreshTokenAuthSchema *schema.RefreshTokenAuthSchema) (map[string]string, bool) {
+	// Check if request body is well formatted JSON
+	if err := json.Unmarshal(body, &refreshTokenAuthSchema); err != nil {
+        return map[string]string {
+			"jsonFormatError": "Invalid JSON data.",
+		}, false
+	}
+	// Validate data based on `RefreshTokenAuthSchema`
+	validator := validation.NewValidator()
+	err := validator.Struct(refreshTokenAuthSchema)
+	if err == nil {
+		return map[string]string {}, true
+	} else {
+		err := validation.ToCustomErrorMessage(err)
+		return err, false
+	}
+}
+
+
 //  Validate forget password JSON data
 func ValidateForgetPasswordData(body []byte, forgetPasswordSchema *schema.ForgetPasswordSchema) (map[string]string, bool) {
 	// Check if request body is well formatted JSON
@@ -82,7 +102,7 @@ func ValidateForgetPasswordData(body []byte, forgetPasswordSchema *schema.Forget
 			"jsonFormatError": "Invalid JSON data.",
 		}, false
 	}
-	// Validate data based on `SignInSchema`
+	// Validate data based on `ForgetPasswordSchema`
 	validator := validation.NewValidator()
 	err := validator.Struct(forgetPasswordSchema)
 	if err == nil {
@@ -94,7 +114,7 @@ func ValidateForgetPasswordData(body []byte, forgetPasswordSchema *schema.Forget
 }
 
 
-//  Validate forget password JSON data
+//  Validate confirm forget password JSON data
 func ValidateConfirmForgetPasswordData(body []byte, confirmForgetPasswordSchema *schema.ConfirmForgetPasswordSchema) (map[string]string, bool) {
 	// Check if request body is well formatted JSON
 	if err := json.Unmarshal(body, &confirmForgetPasswordSchema); err != nil {
@@ -102,7 +122,7 @@ func ValidateConfirmForgetPasswordData(body []byte, confirmForgetPasswordSchema 
 			"jsonFormatError": "Invalid JSON data.",
 		}, false
 	}
-	// Validate data based on `SignInSchema`
+	// Validate data based on `ConfirmForgetPasswordSchema`
 	validator := validation.NewValidator()
 	err := validator.Struct(confirmForgetPasswordSchema)
 	if err == nil {
