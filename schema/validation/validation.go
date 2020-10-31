@@ -1,16 +1,21 @@
-// This package is being used to validate JSON input. 
-// For now, the function stucture is same, but it will 
-// be converted into a common function for input 
-// validation later.
-
 package schemavalidation
 
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/mhmdryhn/cognito-auth-service/core/validation"
 )
+
+
+// Get JSON request body as `[]byte` from context
+func GetRequestBodyAsByteArray(ctx *gin.Context) ([]byte, error) {
+	body, err := ioutil.ReadAll(ctx.Request.Body)
+	return body, err
+}
 
 
 func ValidateJSONData(requestBody []byte, schemaStruct interface{}) (map[string]string, bool) {
