@@ -22,7 +22,7 @@ func ValidateJSONData(requestBody []byte, schemaStruct interface{}) (map[string]
 	// Load JSON into a struct
 	if err := json.Unmarshal(requestBody, &schemaStruct); err != nil {
 		return map[string]string {
-			"jsonFormatError": "Invalid JSON data.",
+			"jsonFormatError": "Data is not JSON formatted.",
 		}, false
 	}
 	// Validate data
