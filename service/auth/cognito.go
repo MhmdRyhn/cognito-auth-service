@@ -26,6 +26,10 @@ func awsSession() *session.Session {
 
 
 // Cognito client
+var CognitoClient *cognitoidp.CognitoIdentityProvider = cognitoidp.New(awsSession())
+
+
+// Cognito client
 var client *cognitoidp.CognitoIdentityProvider = cognitoidp.New(awsSession())
 
 

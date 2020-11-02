@@ -3,6 +3,7 @@ package handler
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,6 +11,13 @@ import (
 	"github.com/mhmdryhn/cognito-auth-service/schema/validation"  // schemavalidation
 	"github.com/mhmdryhn/cognito-auth-service/service/auth"
 )
+
+
+var cognitoAuth auth.CognitoAuth = auth.CognitoAuth {
+	Client: auth.CognitoClient,
+	UserPoolId: os.Getenv("USER_POOL"),
+	AppClientId: os.Getenv("APP_CLIENT_ID"),
+}
 
 
 // Handler function used to SignUp a new user
@@ -100,7 +108,7 @@ func SignInHandler(ctx *gin.Context) {
 		return
 	}
 	// Signin user
-	response, awsError := auth.SignIn(signInSchema.Email, signInSchema.Password)
+	response, awsError := cognitoAuth.SignIn(signInSchema.Email, signInSchema.Password)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": response,
