@@ -23,6 +23,7 @@ func (mock mockSignUp) SignUp(input *cognitoidp.SignUpInput) (*cognitoidp.SignUp
 	return &mock.Response, nil
 }
 
+
 func TestCognitoAuthSignUp(t *testing.T) {
 	email := "user@email.com"
 	cognitoUsername := "7a2361dc-1140-458b-88a9-2addb6c3d183"
@@ -57,6 +58,47 @@ func TestCognitoAuthSignUp(t *testing.T) {
 		equal := reflect.DeepEqual(response, c.Expected)
 		if ! equal {
 			t.Error("Signup failed.")
+		}
+	}
+}
+
+
+// >>> Test `CognitoAuth.ConfirmSignup` method
+type mockConfirmSignUp struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.ConfirmSignUpOutput
+}
+
+
+func (mock mockConfirmSignUp) ConfirmSignUp(input *cognitoidp.ConfirmSignUpInput) (*cognitoidp.ConfirmSignUpOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthConfirmSignUp(t *testing.T) {
+	email := "user@email.com"
+	testCases := []struct {
+		Response cognitoidp.ConfirmSignUpOutput
+		Expected string
+	} {
+		{
+			Response: cognitoidp.ConfirmSignUpOutput {},
+			Expected: fmt.Sprintf("User with email %s confirmed successfully.", email),
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockConfirmSignUp {Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.ConfirmSignUp("user@email.com", "Password!23")
+		if err != nil {
+			t.Error("Error while confirming sign up.")
+		}
+		if response != c.Expected {
+			t.Error("Confirm signup failed.")
 		}
 	}
 }
