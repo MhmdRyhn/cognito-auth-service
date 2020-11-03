@@ -14,18 +14,22 @@ func RegisterRoutes(router *gin.Engine) {
 	router.NoRoute(RouteNotFoundHandler)
 
 	auth := router.Group("/auth")
-	{
-		// auth.POST("/create-user", auth.CreateUser)
-		auth.POST("/signup", handler.SignUpHandler)
-		auth.POST("/confirm-signup", handler.ConfirmSignUpHandler)
-		auth.POST("/signin", handler.SignInHandler)
-		auth.POST("/refresh-token-auth", handler.RefreshTokenAuthHandler)
-		auth.POST("/forgot-password", handler.ForgotPasswordHandler)
-		auth.POST("/confirm-forget-password", handler.ConfirmForgetPasswordHandler)
-		// auth.POST("/change-passowrd", handler.ChangePassowrdHandler)
+	RegisterAuthRoutes(auth)
+}
 
-		// auth.POST("/force-change-password", handler.ForceChangePasswordHandler)
+
+func RegisterAuthRoutes(authGroup *gin.RouterGroup) {
+	{
+		authGroup.POST("/signup", handler.SignUpHandler)
+		authGroup.POST("/confirm-signup", handler.ConfirmSignUpHandler)
+		authGroup.POST("/signin", handler.SignInHandler)
+		authGroup.POST("/refresh-token-auth", handler.RefreshTokenAuthHandler)
+		authGroup.POST("/forgot-password", handler.ForgotPasswordHandler)
+		authGroup.POST("/confirm-forgot-password", handler.ConfirmForgetPasswordHandler)
 	}
+	authChangePassword := authGroup.Group("/")
+	authChangePassword.Use(AuthenticationMiddeware())
+	authChangePassword.POST("/change-password", handler.ChangePassword)
 }
 
 

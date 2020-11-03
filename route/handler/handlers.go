@@ -237,3 +237,12 @@ func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 		})
 	}
 }
+
+
+// Change password staying signed in
+func ChangePassword(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{
+		"message": "From change password",
+		"statusCode": 200,
+	})
+}
