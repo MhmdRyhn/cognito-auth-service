@@ -3,7 +3,7 @@ package auth
 
 import (
 	"fmt"
-	// "os"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	// "github.com/aws/aws-sdk-go/aws/awserr"
@@ -22,7 +22,17 @@ type CognitoAuth struct {
 	// Available methods:
 	//
 	// func (self *CognitoAuth) SignUp(username string, password string) (string, error)
+	// func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error)
 	// func (self *Cognito) SignIn(username string, password string) (map[string]string, error)
+}
+
+
+func NewCognitoAuth() CognitoAuth {
+	return CognitoAuth {
+		Client: CognitoClient,
+		UserPoolId: os.Getenv("USER_POOL_ID"),
+		AppClientId: os.Getenv("APP_CLIENT_ID"),
+	}
 }
 
 
@@ -51,6 +61,23 @@ func (self *CognitoAuth) SignUp(username string, password string) (map[string]st
 			),
 			"cognitoUsername": *(response.UserSub),
 		}, err
+	}
+}
+
+
+// Confirm Signup by providing a confirmation email sent to the user email
+func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error) {
+	confirmSignupInput := &cognitoidp.ConfirmSignUpInput {
+		ClientId: aws.String(self.AppClientId),
+		Username: aws.String(username),
+		ConfirmationCode: aws.String(confirmationCode),
+	}
+
+	_, err := self.Client.ConfirmSignUp(confirmSignupInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("User with email %s confirmed successfully.", username), err
 	}
 }
 

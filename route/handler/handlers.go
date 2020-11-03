@@ -3,7 +3,7 @@ package handler
 
 import (
 	"net/http"
-	"os"
+	// "os"
 
 	"github.com/gin-gonic/gin"
 
@@ -13,11 +13,7 @@ import (
 )
 
 
-var cognitoAuth auth.CognitoAuth = auth.CognitoAuth {
-	Client: auth.CognitoClient,
-	UserPoolId: os.Getenv("USER_POOL_ID"),
-	AppClientId: os.Getenv("APP_CLIENT_ID"),
-}
+var cognitoAuth auth.CognitoAuth = auth.NewCognitoAuth()
 
 
 // Handler function used to SignUp a new user
@@ -72,7 +68,10 @@ func ConfirmSignUpHandler(ctx *gin.Context) {
 		return
 	} 
 	// Confirm SignUp a new user
-	response, awsError := auth.ConfirmSignUp(confirmSignUpSchema.Email, confirmSignUpSchema.ConfirmationCode)
+	response, awsError := cognitoAuth.ConfirmSignUp(
+		confirmSignUpSchema.Email, 
+		confirmSignUpSchema.ConfirmationCode,
+	)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": map[string]string {},
