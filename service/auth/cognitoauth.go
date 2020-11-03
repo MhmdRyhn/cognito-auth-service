@@ -21,10 +21,11 @@ type CognitoAuth struct {
 
 	// Available methods:
 	//
-	// func (self *CognitoAuth) SignUp(username string, password string) (string, error)
+	// func (self *CognitoAuth) SignUp(username string, password string) (map[string]string, error)
 	// func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error)
 	// func (self *Cognito) SignIn(username string, password string) (map[string]string, error)
 	// func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error)
+	// func (self *CognitoAuth) ForgetPassword(username string) (string, error)
 }
 
 
@@ -132,5 +133,23 @@ func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]strin
 			"idToken": *(response.AuthenticationResult.IdToken),
 			"refreshToken": refreshToken,
 		}, err
+	}
+}
+
+
+// Send a verification code to users' `email` to reset password
+func (self *CognitoAuth) ForgotPassword(username string) (string, error) {
+	forgetPasswordInput := &cognitoidp.ForgotPasswordInput {
+		ClientId: aws.String(self.AppClientId),
+		Username: aws.String(username),
+    }
+
+	_, err := self.Client.ForgotPassword(forgetPasswordInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf(
+			"A verification code will be sent to email %s if a user exists with this email.", username,
+		), err
 	}
 }

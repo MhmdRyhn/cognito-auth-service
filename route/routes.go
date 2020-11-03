@@ -16,7 +16,7 @@ func RegisterRoutes(router *gin.Engine) {
 		auth.POST("/confirm-signup", handler.ConfirmSignUpHandler)
 		auth.POST("/signin", handler.SignInHandler)
 		auth.POST("/refresh-token-auth", handler.RefreshTokenAuthHandler)
-		auth.POST("/forget-password", handler.ForgetPasswordHandler)
+		auth.POST("/forgot-password", handler.ForgotPasswordHandler)
 		auth.POST("/confirm-forget-password", handler.ConfirmForgetPasswordHandler)
 		// auth.POST("/change-passowrd", handler.ChangePassowrdHandler)
 

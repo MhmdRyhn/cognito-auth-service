@@ -56,7 +56,7 @@ func SignUpHandler(ctx *gin.Context) {
 func ConfirmSignUpHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var confirmSignUpSchema schema.ConfirmSignUpSchema
-	// Validate confirm signup input data
+	// Validate input data
 	errorMessages, ok := schemavalidation.ValidateJSONData(body, &confirmSignUpSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -95,7 +95,7 @@ func ConfirmSignUpHandler(ctx *gin.Context) {
 func SignInHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var signInSchema schema.SignInSchema
-	// Validate signin input data
+	// Validate input data
 	errorMessages, ok := schemavalidation.ValidateJSONData(body, &signInSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -131,7 +131,7 @@ func SignInHandler(ctx *gin.Context) {
 func RefreshTokenAuthHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var refreshTokenAuthSchema schema.RefreshTokenAuthSchema
-	// Validate signin input data
+	// Validate input data
 	errorMessages, ok := schemavalidation.ValidateJSONData(body, &refreshTokenAuthSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -164,10 +164,10 @@ func RefreshTokenAuthHandler(ctx *gin.Context) {
 
 
 // Handler function used to get code for reset password
-func ForgetPasswordHandler(ctx *gin.Context) {
+func ForgotPasswordHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var forgetPasswordSchema schema.ForgetPasswordSchema
-	// Validate signin input data
+	// Validate input data
 	errorMessages, ok := schemavalidation.ValidateJSONData(body, &forgetPasswordSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -179,7 +179,7 @@ func ForgetPasswordHandler(ctx *gin.Context) {
 		return
 	}
 	// Send verification code to reset password
-	response, awsError := auth.ForgetPassword(forgetPasswordSchema.Email)
+	response, awsError := cognitoAuth.ForgotPassword(forgetPasswordSchema.Email)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": map[string]string {},
