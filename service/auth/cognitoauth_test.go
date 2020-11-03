@@ -160,7 +160,7 @@ func TestCognitoAuthSignIn(t *testing.T) {
 }
 
 
-// >>> Test `CognitoAuth.SignIn` method
+// >>> Test `CognitoAuth.RefreshTokenAuth` method
 type mockRefreshTokenAuth struct {
 	cognitoidpiface.CognitoIdentityProviderAPI
 	Response cognitoidp.InitiateAuthOutput
@@ -211,6 +211,50 @@ func TestCognitoAuthRefreshTokenAuth(t *testing.T) {
 		equal := reflect.DeepEqual(response, c.Expected)
 		if ! equal {
 			t.Error("Signin using refresh token failed.")
+		}
+	}
+}
+
+
+// >>> Test `CognitoAuth.ForgetPassword` method
+type mockForgotPassword struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.ForgotPasswordOutput
+}
+
+
+func (mock mockForgotPassword) ForgotPassword(input *cognitoidp.ForgotPasswordInput) (*cognitoidp.ForgotPasswordOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthForgotPassword(t *testing.T) {
+	email := "user@email.com"
+	testCases := []struct {
+		Response cognitoidp.ForgotPasswordOutput
+		Expected string
+	} {
+		{
+			Response: cognitoidp.ForgotPasswordOutput {},
+			Expected: fmt.Sprintf(
+				"A verification code will be sent to email %s if a user exists with this email.", 
+				email,
+			),
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockForgotPassword {Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.ForgotPassword(email)
+		if err != nil {
+			t.Error("Error while getting verification code to reset password.")
+		}
+		if response != c.Expected {
+			t.Error("Failed to get verification code to reset password.")
 		}
 	}
 }
