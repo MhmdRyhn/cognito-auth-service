@@ -2,7 +2,7 @@ package auth
 
 
 import (
-	// "fmt"
+	"fmt"
 	// "os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,10 +21,41 @@ type CognitoAuth struct {
 
 	// Available methods:
 	//
+	// func (self *CognitoAuth) SignUp(username string, password string) (string, error)
 	// func (self *Cognito) SignIn(username string, password string) (map[string]string, error)
 }
 
 
+// Users Signup by themselves
+func (self *CognitoAuth) SignUp(username string, password string) (map[string]string, error) {
+	signUpInput := &cognitoidp.SignUpInput {
+		ClientId: aws.String(self.AppClientId),
+		Username: aws.String(username),
+		Password: aws.String(password),
+        UserAttributes: []*cognitoidp.AttributeType{
+            {
+                Name:  aws.String("email"),
+                Value: aws.String(username),
+			},
+		},
+	}
+
+	response, err := self.Client.SignUp(signUpInput)
+	if err != nil {
+		return map[string]string {}, err
+	} else {
+		return map[string]string {
+			"message": fmt.Sprintf(
+				"User with email %s signed up successfully. Please check your email for confirmation code.", 
+				username,
+			),
+			"cognitoUsername": *(response.UserSub),
+		}, err
+	}
+}
+
+
+// User signin using `username` and `password`
 func (self *CognitoAuth) SignIn(username string, password string) (map[string]string, error) {
 	signinInput := &cognitoidp.InitiateAuthInput {
 		ClientId : aws.String(self.AppClientId),

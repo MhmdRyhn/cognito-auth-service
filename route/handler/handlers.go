@@ -15,7 +15,7 @@ import (
 
 var cognitoAuth auth.CognitoAuth = auth.CognitoAuth {
 	Client: auth.CognitoClient,
-	UserPoolId: os.Getenv("USER_POOL"),
+	UserPoolId: os.Getenv("USER_POOL_ID"),
 	AppClientId: os.Getenv("APP_CLIENT_ID"),
 }
 
@@ -36,12 +36,12 @@ func SignUpHandler(ctx *gin.Context) {
 		return
 	} 
 	// SignUp a new user
-	response, awsError := auth.SignUp(signUpSchema.Email, signUpSchema.Password)
+	response, awsError := cognitoAuth.SignUp(signUpSchema.Email, signUpSchema.Password)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"data": map[string]string {},
+			"data": map[string]string {"cognitoUsername": response["cognitoUsername"]},
 			"errors": map[string]string {},
-			"message": response,
+			"message": response["message"],
 			"statusCode": http.StatusOK,
 		})
 	} else {
