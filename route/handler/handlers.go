@@ -127,7 +127,7 @@ func SignInHandler(ctx *gin.Context) {
 }
 
 
-// Handler function used to get new tokej using Refresh token
+// Handler function used to get new tokens using Refresh token
 func RefreshTokenAuthHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var refreshTokenAuthSchema schema.RefreshTokenAuthSchema
@@ -142,8 +142,8 @@ func RefreshTokenAuthHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	// Signin user
-	response, awsError := auth.RefreshTokenAuth(refreshTokenAuthSchema.RefreshToken)
+	// Get new tokens
+	response, awsError := cognitoAuth.RefreshTokenAuth(refreshTokenAuthSchema.RefreshToken)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"data": map[string]string {},
@@ -178,7 +178,7 @@ func ForgetPasswordHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	// Signin user
+	// Send verification code to reset password
 	response, awsError := auth.ForgetPassword(forgetPasswordSchema.Email)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
@@ -214,7 +214,7 @@ func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 		})
 		return
 	}
-	// Signin user
+	// Reset password
 	response, awsError := auth.ConfirmForgetPassword(
 		confirmForgetPasswordSchema.Email, 
 		confirmForgetPasswordSchema.ConfirmationCode,

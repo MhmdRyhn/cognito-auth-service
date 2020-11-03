@@ -110,3 +110,26 @@ func (self *CognitoAuth) SignIn(username string, password string) (map[string]st
 		}
 	}
 }
+
+
+// Get new `accessToken` and `idToken` using the `refreshToken`
+func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error) {
+	refreshTokenAuthInput := &cognitoidp.InitiateAuthInput {
+		ClientId : aws.String(self.AppClientId),
+		AuthFlow: aws.String("REFRESH_TOKEN_AUTH"),
+		AuthParameters: map[string]*string {
+			"REFRESH_TOKEN": aws.String(refreshToken),
+		},
+	}
+
+	response, err := self.Client.InitiateAuth(refreshTokenAuthInput)
+	if err != nil {
+		return map[string]string {}, err
+	} else {
+		return map[string]string {
+			"accessToken": *(response.AuthenticationResult.AccessToken),
+			"idToken": *(response.AuthenticationResult.IdToken),
+			"refreshToken": refreshToken,
+		}, err
+	}
+}
