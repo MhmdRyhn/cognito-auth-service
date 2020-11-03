@@ -158,3 +158,59 @@ func TestCognitoAuthSignIn(t *testing.T) {
 		}
 	}
 }
+
+
+// >>> Test `CognitoAuth.SignIn` method
+type mockRefreshTokenAuth struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.InitiateAuthOutput
+}
+
+
+func (mock mockRefreshTokenAuth) InitiateAuth(input *cognitoidp.InitiateAuthInput) (*cognitoidp.InitiateAuthOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthRefreshTokenAuth(t *testing.T) {
+	accessToken := "access-token"
+	idToken := "id-token"
+	refreshToken := "refresh-token"
+	testCases := []struct {
+		Response cognitoidp.InitiateAuthOutput
+		Expected map[string]string
+	} {
+		{
+			Response: cognitoidp.InitiateAuthOutput {
+				AuthenticationResult: &cognitoidp.AuthenticationResultType {
+					AccessToken: aws.String(accessToken),
+					ExpiresIn: aws.Int64(3600),
+					IdToken: aws.String(idToken),
+					RefreshToken: aws.String(refreshToken),
+					TokenType: aws.String("Access"),
+				},
+			},
+			Expected: map[string]string {
+				"accessToken": accessToken,
+				"idToken": idToken,
+				"refreshToken": refreshToken,
+			},
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockRefreshTokenAuth{Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.RefreshTokenAuth(refreshToken)
+		if err != nil {
+			t.Error("Error while signing in using refresh token.")
+		}
+		equal := reflect.DeepEqual(response, c.Expected)
+		if ! equal {
+			t.Error("Signin using refresh token failed.")
+		}
+	}
+}

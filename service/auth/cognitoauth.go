@@ -24,6 +24,7 @@ type CognitoAuth struct {
 	// func (self *CognitoAuth) SignUp(username string, password string) (string, error)
 	// func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error)
 	// func (self *Cognito) SignIn(username string, password string) (map[string]string, error)
+	// func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error)
 }
 
 

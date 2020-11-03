@@ -29,5 +29,5 @@ Auth service built using **Go** in **AWS Cognito**. To use this repository as yo
 
 ## Run The Server
 ``` shell script
-AWS_PROFILE={profile} AWS_REGION={region} USER_POOL={user-pool-id} APP_CLIENT_ID={app-client-id} go run cmd/main.go
+AWS_PROFILE={profile} AWS_REGION={region} USER_POOL_ID={user-pool-id} APP_CLIENT_ID={app-client-id} go run cmd/main.go
 ```
