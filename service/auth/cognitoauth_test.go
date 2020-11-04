@@ -258,3 +258,44 @@ func TestCognitoAuthForgotPassword(t *testing.T) {
 		}
 	}
 }
+
+
+// >>> Test `CognitoAuth.ConfirmForgetPassword` method
+type mockConfirmForgotPassword struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.ConfirmForgotPasswordOutput
+}
+
+
+func (mock mockConfirmForgotPassword) ConfirmForgotPassword(input *cognitoidp.ConfirmForgotPasswordInput) (*cognitoidp.ConfirmForgotPasswordOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthConfirmForgotPassword(t *testing.T) {
+	email := "user@email.com"
+	testCases := []struct {
+		Response cognitoidp.ConfirmForgotPasswordOutput
+		Expected string
+	} {
+		{
+			Response: cognitoidp.ConfirmForgotPasswordOutput {},
+			Expected: "New password has been set successfully.",
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockConfirmForgotPassword {Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.ConfirmForgotPassword(email, "123456", "Password!23")
+		if err != nil {
+			t.Error("Error while getting verification code to reset password.")
+		}
+		if response != c.Expected {
+			t.Error("Failed to get verification code to reset password.")
+		}
+	}
+}
