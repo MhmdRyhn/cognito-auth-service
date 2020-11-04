@@ -215,7 +215,7 @@ func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 		return
 	}
 	// Reset password
-	response, awsError := auth.ConfirmForgetPassword(
+	response, awsError := cognitoAuth.ConfirmForgotPassword(
 		confirmForgetPasswordSchema.Email, 
 		confirmForgetPasswordSchema.ConfirmationCode,
 		confirmForgetPasswordSchema.Password,

@@ -23,9 +23,10 @@ type CognitoAuth struct {
 	//
 	// func (self *CognitoAuth) SignUp(username string, password string) (map[string]string, error)
 	// func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error)
-	// func (self *Cognito) SignIn(username string, password string) (map[string]string, error)
+	// func (self *CognitoAuth) SignIn(username string, password string) (map[string]string, error)
 	// func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error)
 	// func (self *CognitoAuth) ForgetPassword(username string) (string, error)
+	// func (self *CognitoAuth) ConfirmForgetPassword(username string, confirmationCode string, password string) (string, error)
 }
 
 
@@ -151,5 +152,23 @@ func (self *CognitoAuth) ForgotPassword(username string) (string, error) {
 		return fmt.Sprintf(
 			"A verification code will be sent to email %s if a user exists with this email.", username,
 		), err
+	}
+}
+
+
+// Users can reset password using the verification code sent to their email
+func (self *CognitoAuth) ConfirmForgotPassword(username string, confirmationCode string, password string) (string, error) {
+	confirmForgetPasswordInput := &cognitoidp.ConfirmForgotPasswordInput {
+		ClientId: aws.String(self.AppClientId),
+		Username: aws.String(username),
+		ConfirmationCode: aws.String(confirmationCode),
+		Password: aws.String(password),
+    }
+
+	_, err := self.Client.ConfirmForgotPassword(confirmForgetPasswordInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("New password has been set successfully."), err
 	}
 }
