@@ -260,7 +260,7 @@ func TestCognitoAuthForgotPassword(t *testing.T) {
 }
 
 
-// >>> Test `CognitoAuth.ConfirmForgetPassword` method
+// >>> Test `CognitoAuth.ConfirmForgotPassword` method
 type mockConfirmForgotPassword struct {
 	cognitoidpiface.CognitoIdentityProviderAPI
 	Response cognitoidp.ConfirmForgotPasswordOutput
@@ -291,6 +291,47 @@ func TestCognitoAuthConfirmForgotPassword(t *testing.T) {
 			AppClientId: "mock-app-client-id",
 		}
 		response, err := cognitoAuth.ConfirmForgotPassword(email, "123456", "Password!23")
+		if err != nil {
+			t.Error("Error while getting verification code to reset password.")
+		}
+		if response != c.Expected {
+			t.Error("Failed to get verification code to reset password.")
+		}
+	}
+}
+
+
+// >>> Test `CognitoAuth.ChangePassword` method
+type mockChangePassword struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.ChangePasswordOutput
+}
+
+
+func (mock mockChangePassword) ChangePassword(input *cognitoidp.ChangePasswordInput) (*cognitoidp.ChangePasswordOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthChangePassword(t *testing.T) {
+	accessToken := "access-token"
+	testCases := []struct {
+		Response cognitoidp.ChangePasswordOutput
+		Expected string
+	} {
+		{
+			Response: cognitoidp.ChangePasswordOutput {},
+			Expected: "Password has been changed successfully.",
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockChangePassword {Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.ChangePassword("Password!23", "Password!234", accessToken)
 		if err != nil {
 			t.Error("Error while getting verification code to reset password.")
 		}

@@ -186,6 +186,6 @@ func (self *CognitoAuth) ChangePassword(currentPassword string, newPassword stri
 	if err != nil {
 		return "", err
 	} else {
-		return fmt.Sprintf("Password changed successfully."), err
+		return fmt.Sprintf("Password has been changed successfully."), err
 	}
 }
