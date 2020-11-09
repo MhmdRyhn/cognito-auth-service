@@ -29,6 +29,7 @@ func awsSession() *session.Session {
 var CognitoClient *cognitoidp.CognitoIdentityProvider = cognitoidp.New(awsSession())
 
 
+// TODO: Remove this after refactoring `func ResendConfirmationCode(username string) (string, error)`
 // Cognito client
 var client *cognitoidp.CognitoIdentityProvider = cognitoidp.New(awsSession())
 

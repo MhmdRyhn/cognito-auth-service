@@ -1,3 +1,5 @@
+// Auth functionalities using AWS Cognito
+
 package auth
 
 
@@ -6,17 +8,19 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
-	// "github.com/aws/aws-sdk-go/aws/awserr"
-	// "github.com/aws/aws-sdk-go/aws/credentials"
-	// "github.com/aws/aws-sdk-go/aws/session"
 	cognitoidp "github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	cognitoidpiface "github.com/aws/aws-sdk-go/service/cognitoidentityprovider/cognitoidentityprovideriface"
 )
 
 
 type CognitoAuth struct {
+	// Interface that provides AWS Cognito API methods (client)
 	Client cognitoidpiface.CognitoIdentityProviderAPI
+
+	// AWS Cognito User Pool ID
 	UserPoolId string
+
+	// AWS Cognito User Pool's App Client ID
 	AppClientId string
 
 	// Available methods:
