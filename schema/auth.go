@@ -35,3 +35,10 @@ type ConfirmForgetPasswordSchema struct {
 	ConfirmationCode string `json:"confirmationCode" validate:"required,min=1"`
 	Password string `json:"password" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
 }
+
+
+type ChangePasswordSchema struct {
+	CurrentPassword string `json:"currentPassword" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
+	NewPassword string `json:"newPassword" validate:"required,min=6,max=32,uppercase,lowercase,digit,punctuation"`
+	AccessToken string `json:"accessToken" validate:"required,min=1"`
+}

@@ -146,9 +146,9 @@ func RefreshTokenAuthHandler(ctx *gin.Context) {
 	response, awsError := cognitoAuth.RefreshTokenAuth(refreshTokenAuthSchema.RefreshToken)
 	if awsError == nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"data": map[string]string {},
+			"data": response,
 			"errors": map[string]string {},
-			"message": response,
+			"message": "Got new tokens successfully.",
 			"statusCode": http.StatusOK,
 		})
 	} else {
@@ -203,7 +203,7 @@ func ForgotPasswordHandler(ctx *gin.Context) {
 func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
 	var confirmForgetPasswordSchema schema.ConfirmForgetPasswordSchema
-	// Validate signin input data
+	// Validate input data
 	errorMessages, ok := schemavalidation.ValidateJSONData(body, &confirmForgetPasswordSchema)
 	if !ok {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -241,8 +241,39 @@ func ConfirmForgetPasswordHandler(ctx *gin.Context) {
 
 // Change password staying signed in
 func ChangePassword(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"message": "From change password",
-		"statusCode": 200,
-	})
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var changePasswordSchema schema.ChangePasswordSchema
+	// Validate input data
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &changePasswordSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	}
+	// Change password
+	response, awsError := cognitoAuth.ChangePassword(
+		changePasswordSchema.CurrentPassword, 
+		changePasswordSchema.NewPassword,
+		changePasswordSchema.AccessToken,
+	)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {},
+			"message": response,
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
 }

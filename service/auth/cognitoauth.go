@@ -172,3 +172,20 @@ func (self *CognitoAuth) ConfirmForgotPassword(username string, confirmationCode
 		return fmt.Sprintf("New password has been set successfully."), err
 	}
 }
+
+
+// Change password staying signed in
+func (self *CognitoAuth) ChangePassword(currentPassword string, newPassword string, accessToken string) (string, error) {
+	changePasswordInput := &cognitoidp.ChangePasswordInput {
+		PreviousPassword: aws.String(currentPassword),
+		ProposedPassword: aws.String(newPassword),
+		AccessToken: aws.String(accessToken),
+    }
+
+	_, err := self.Client.ChangePassword(changePasswordInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("Password changed successfully."), err
+	}
+}
