@@ -1,3 +1,5 @@
+// Package for utilities 
+
 package utils
 
 
@@ -27,10 +29,14 @@ var (
 
 
 type JWTValidator struct {
+	// The claims found in the token right after the 
+	// token is parsed successfully.
 	claims jwt.MapClaims
 }
 
 
+// `KeyFunc` in `jwt.Parse`. It validates the signing method 
+// (RS256 in this caase). Then, it build token key using JWKs.
 func (self *JWTValidator) KeyFunction (token *jwt.Token) (interface{}, error) {
 	// Validate signing method/algorithm
 	if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -60,6 +66,8 @@ func (self *JWTValidator) KeyFunction (token *jwt.Token) (interface{}, error) {
 }
 
 
+// Validate token, its signature, basic claims etc. 
+// and return all the claims present in the token.
 func (self *JWTValidator) ParseJWT(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, self.KeyFunction)
 	if token != nil && token.Valid {
@@ -70,20 +78,27 @@ func (self *JWTValidator) ParseJWT(tokenString string) (jwt.MapClaims, error) {
 		return nil, err
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors & jwt.ValidationErrorMalformed != 0 {
-			return nil, errors.New("That's not even a token. Please make sure you are using a valid token.")
+			return nil, errors.New("This is not even a token. Please make sure you are using a valid token.")
+		} else {
+			return nil, err
 		}
-	} else {
-		return nil, err
 	}
 	return nil, err
 }
 
 
+// Verify `client_id` in the token.
 func (self *JWTValidator) VerifyClient(client string) bool {
 	return self.claims["client_id"] == client
 }
 
 
+// Verifies the token. It verifies:
+// - If it is actually a token
+// - Signing method (RS256)
+// - Expiration
+// - Issuer
+// - Client
 func (self *JWTValidator) Validate(tokenString string) (jwt.MapClaims, error) {
 	claims, err := self.ParseJWT(tokenString)
 	if err != nil {
