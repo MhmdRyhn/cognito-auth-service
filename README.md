@@ -24,10 +24,11 @@ Auth service built using **Go** in **AWS Cognito**. To use this repository as yo
 - Sign In - `/auth/signin`
 - Refresh Token Auth - `/auth/refresh-token-auth`
 - Forgot Password - `/auth/forgot-password`
-- Confirm Forget Password - `/auth/confirm-forget-password`
+- Confirm Forgot Password - `/auth/confirm-forget-password`
+- Change Password - `/auth/change-password`
 
 
-## Run The Server
+## Run The Server Without Build For Development
 ``` shell script
 AWS_PROFILE={profile} AWS_REGION={region} USER_POOL_ID={user-pool-id} APP_CLIENT_ID={app-client-id} go run cmd/main.go
 ```

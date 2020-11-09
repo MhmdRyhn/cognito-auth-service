@@ -27,6 +27,7 @@ type CognitoAuth struct {
 	// func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error)
 	// func (self *CognitoAuth) ForgetPassword(username string) (string, error)
 	// func (self *CognitoAuth) ConfirmForgetPassword(username string, confirmationCode string, password string) (string, error)
+	// func (self *CognitoAuth) ChangePassword(currentPassword string, newPassword string, accessToken string) (string, error)
 }
 
 
