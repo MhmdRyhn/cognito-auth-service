@@ -63,6 +63,51 @@ func TestCognitoAuthSignUp(t *testing.T) {
 }
 
 
+// >>> Test `CognitoAuth.ResendConfirmationCode` method
+type mockResendConfirmationCode struct {
+	cognitoidpiface.CognitoIdentityProviderAPI
+	Response cognitoidp.ResendConfirmationCodeOutput
+}
+
+
+func (mock mockResendConfirmationCode) ResendConfirmationCode(input *cognitoidp.ResendConfirmationCodeInput) (*cognitoidp.ResendConfirmationCodeOutput, error) {
+	return &mock.Response, nil
+}
+
+
+func TestCognitoAuthResendConfirmationCode(t *testing.T) {
+	email := "user@email.com"
+	testCases := []struct {
+		Response cognitoidp.ResendConfirmationCodeOutput
+		Expected string
+	} {
+		{
+			Response: cognitoidp.ResendConfirmationCodeOutput {},
+			Expected: fmt.Sprintf(
+				"A verification code will be resent to email %s if a user exists with this email.", 
+				email,
+			),
+		},
+	}
+
+	for _, c := range testCases {
+		cognitoAuth := CognitoAuth {
+			Client: mockResendConfirmationCode{Response: c.Response},
+			UserPoolId: "mock-user-pool-id",
+			AppClientId: "mock-app-client-id",
+		}
+		response, err := cognitoAuth.ResendConfirmationCode(email)
+		if err != nil {
+			t.Error("Error while resending confirmation code.")
+		}
+		equal := reflect.DeepEqual(response, c.Expected)
+		if ! equal {
+			t.Error("Resending confirmation code failed.")
+		}
+	}
+}
+
+
 // >>> Test `CognitoAuth.ConfirmSignup` method
 type mockConfirmSignUp struct {
 	cognitoidpiface.CognitoIdentityProviderAPI
