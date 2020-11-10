@@ -26,6 +26,7 @@ type CognitoAuth struct {
 	// Available methods:
 	//
 	// func (self *CognitoAuth) SignUp(username string, password string) (map[string]string, error)
+	// func (self *CognitoAuth) ResendConfirmationCode(username string) (string, error)
 	// func (self *CognitoAuth) ConfirmSignUp(username string, confirmationCode string) (string, error)
 	// func (self *CognitoAuth) SignIn(username string, password string) (map[string]string, error)
 	// func (self *CognitoAuth) RefreshTokenAuth(refreshToken string) (map[string]string, error)
@@ -69,6 +70,24 @@ func (self *CognitoAuth) SignUp(username string, password string) (map[string]st
 			),
 			"cognitoUsername": *(response.UserSub),
 		}, err
+	}
+}
+
+
+// Resend a verification code to user's `email`
+func (self *CognitoAuth) ResendConfirmationCode(username string) (string, error) {
+	resendConfirmationCodeInput := &cognitoidp.ResendConfirmationCodeInput {
+		ClientId: aws.String(self.AppClientId),
+		Username: aws.String(username),
+    }
+
+	_, err := self.Client.ResendConfirmationCode(resendConfirmationCodeInput)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf(
+			"A verification code will be resent to email %s if a user exists with this email.", username,
+		), err
 	}
 }
 

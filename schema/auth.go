@@ -8,6 +8,11 @@ type SignUpSchema struct {
 }
 
 
+type ResendConfirmationCodeSchema struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+
 type ConfirmSignUpSchema struct {
 	Email string `json:"email" validate:"required,email"`
 	ConfirmationCode string `json:"confirmationCode" validate:"required,min=1"`
