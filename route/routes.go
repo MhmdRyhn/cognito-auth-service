@@ -21,6 +21,7 @@ func RegisterRoutes(router *gin.Engine) {
 func RegisterAuthRoutes(authGroup *gin.RouterGroup) {
 	{
 		authGroup.POST("/signup", handler.SignUpHandler)
+		authGroup.POST("/resend-confirmation-code", handler.ResendConfirmationCodeHandler)
 		authGroup.POST("/confirm-signup", handler.ConfirmSignUpHandler)
 		authGroup.POST("/signin", handler.SignInHandler)
 		authGroup.POST("/refresh-token-auth", handler.RefreshTokenAuthHandler)

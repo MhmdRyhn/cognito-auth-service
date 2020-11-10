@@ -1,9 +1,10 @@
+// Package for Auth Handler functions
+
 package handler
 
 
 import (
 	"net/http"
-	// "os"
 
 	"github.com/gin-gonic/gin"
 
@@ -38,6 +39,42 @@ func SignUpHandler(ctx *gin.Context) {
 			"data": map[string]string {"cognitoUsername": response["cognitoUsername"]},
 			"errors": map[string]string {},
 			"message": response["message"],
+			"statusCode": http.StatusOK,
+		})
+	} else {
+		errorCode, errorMessage := auth.CognitoErrorDetails(awsError)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {errorCode: errorMessage},
+			"message": errorMessage,
+			"statusCode": http.StatusBadRequest,
+		})
+	}
+}
+
+
+// Handler function used to resend a confirmation code
+func ResendConfirmationCodeHandler(ctx *gin.Context) {
+	body, _ := schemavalidation.GetRequestBodyAsByteArray(ctx)
+	var resendConfirmationCodeSchema schema.ResendConfirmationCodeSchema
+	// Validate input data
+	errorMessages, ok := schemavalidation.ValidateJSONData(body, &resendConfirmationCodeSchema)
+	if !ok {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"data": map[string]string {},
+			"errors": errorMessages,
+			"message": "Invalid JSON input data.",
+			"statusCode": http.StatusUnprocessableEntity,
+		})
+		return
+	} 
+	// Resend a confirmation code
+	response, awsError := cognitoAuth.ResendConfirmationCode(resendConfirmationCodeSchema.Email)
+	if awsError == nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"data": map[string]string {},
+			"errors": map[string]string {},
+			"message": response,
 			"statusCode": http.StatusOK,
 		})
 	} else {
