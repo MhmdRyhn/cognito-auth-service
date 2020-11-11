@@ -26,6 +26,7 @@ Auth service built using **Go** in **AWS Cognito**. To use this repository as yo
 - Forgot Password - `/auth/forgot-password`
 - Confirm Forgot Password - `/auth/confirm-forget-password`
 - Change Password - `/auth/change-password`
+- Resend Confirmation Code - `/auth/resend-confirmation-code`
 
 
 ## Run The Server Without Build For Development
